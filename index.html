@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Santa Draw</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Secret Santa Draw</h1>
+    <label for="name">Choose your name:</label>
+    <select id="name">
+      <option value="">--Select your name--</option>
+    </select>
+
+    <div class="present-container">
+      <div class="lid"></div>
+      <img id="present" src="present.jpg" alt="Gift Box">
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

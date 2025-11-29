@@ -1,0 +1,15 @@
+{
+  "people": ["SAUL", "JONAH", "AARON", "GABI", "HELEN", "JOHN", "RACHEL", "KATE", "JIM"],
+  "assignments": {},
+  "exclusions": {
+    "SAUL": [],
+    "JONAH": [],
+    "AARON": ["GABI"],
+    "GABI": ["AARON"],
+    "HELEN": ["JOHN"],
+    "JOHN": ["HELEN"],
+    "RACHEL": [],
+    "KATE": ["JIM"],
+    "JIM": ["KATE"]
+  }
+}
