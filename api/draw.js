@@ -5,19 +5,24 @@ const dataPath = path.join(process.cwd(), 'data.json');
 
 export default function handler(req, res) {
   const { name } = req.query;
-  if (!name) {
-    res.status(400).json({ error: 'Name is required' });
-    return;
-  }
 
+  // read JSON file
   const rawData = fs.readFileSync(dataPath);
   const data = JSON.parse(rawData);
 
+  // if no name is provided, just return list of people
+  if (!name) {
+    res.status(200).json({ people: data.people });
+    return;
+  }
+
+  // check if already assigned
   if (data.assignments[name]) {
     res.status(200).json({ assignment: data.assignments[name] });
     return;
   }
 
+  // create pool excluding self, exclusions, and already assigned
   const assigned = Object.values(data.assignments);
   let pool = data.people.filter(
     p => p !== name && !assigned.includes(p) && !data.exclusions[name].includes(p)
@@ -28,7 +33,10 @@ export default function handler(req, res) {
     return;
   }
 
+  // pick random person
   const picked = pool[Math.floor(Math.random() * pool.length)];
+
+  // save assignment
   data.assignments[name] = picked;
   fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 
