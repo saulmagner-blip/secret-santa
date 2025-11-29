@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const people = ["SAUL","JONAH","AARON","GABI","HELEN","JOHN","RACHEL","KATE","JIM"];
+  const exclusions = {
+    "SAUL": [], "JONAH": [], "AARON": ["GABI"], "GABI": ["AARON"],
+    "HELEN": ["JOHN"], "JOHN": ["HELEN"], "RACHEL": [], "KATE": ["JIM"], "JIM": ["KATE"]
+  };
+
   const elf = document.getElementById('elf');
   const elfHappy = document.getElementById('elf-happy');
   const nameButtonsContainer = document.getElementById('name-buttons');
@@ -18,18 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
   elf.addEventListener('click', () => {
     vibrate();
     nameButtonsContainer.classList.remove('hidden');
-    speech.src = 'assets/speech_hello.png';
+    speech.src = 'speech_hello.png';
     speech.classList.remove('hidden');
-    elf.src = 'assets/elf_greeting.png';
+    elf.src = 'elf_greeting.png';
   });
 
   nameButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       vibrate();
       selectedName = btn.dataset.name;
-      selectedNameDisplay.src = `assets/button_${selectedName.toLowerCase()}.png`;
+      selectedNameDisplay.src = `button_${selectedName.toLowerCase()}.png`;
       selectedNameDisplay.classList.remove('hidden');
-      speech.src = 'assets/speech_confirm.png';
+      speech.src = 'speech_confirm.png';
       speech.classList.remove('hidden');
       yesNo.classList.remove('hidden');
       nameButtonsContainer.classList.add('hidden');
@@ -42,28 +48,32 @@ document.addEventListener('DOMContentLoaded', () => {
   yesBtn.addEventListener('click', async () => {
     vibrate();
     try {
-      const res = await fetch(`/api/getAssignment?name=${selectedName}`);
-      const data = await res.json();
+      const response = await fetch(`/api/getAssignment?name=${selectedName}`);
+      const data = await response.json();
       if (data.error) { alert(data.error); return; }
       const picked = data.assignment;
 
       elf.style.display = 'none';
       elfHappy.classList.remove('hidden');
-      resultText.src = `assets/result_${picked.toLowerCase()}.png`;
+      resultText.src = `result_${picked.toLowerCase()}.png`;
       resultContainer.classList.remove('hidden');
 
       selectedNameDisplay.classList.add('hidden');
       speech.classList.add('hidden');
       yesNo.classList.add('hidden');
       nameButtonsContainer.classList.add('hidden');
-    } catch(err) { alert("Error fetching assignment"); console.error(err); }
+
+    } catch (err) {
+      alert("Error fetching assignment");
+      console.error(err);
+    }
   });
 
   noBtn.addEventListener('click', () => {
     vibrate();
     yesNo.classList.add('hidden');
     selectedNameDisplay.classList.add('hidden');
-    speech.src = 'assets/speech_hello.png';
+    speech.src = 'speech_hello.png';
     speech.classList.remove('hidden');
     nameButtonsContainer.classList.remove('hidden');
     resultContainer.classList.add('hidden');
@@ -72,17 +82,20 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedName = null;
   });
 
-  // Shift+R reset
-  document.addEventListener('keydown', async (e) => {
-    if (e.shiftKey && e.key.toLowerCase() === 'r') {
+  document.addEventListener("keydown", async (e) => {
+    if (e.shiftKey && e.key.toLowerCase() === "r") {
       const pw = prompt("Enter admin password to reset assignments:");
       if (pw !== "reset69") { alert("Wrong password!"); return; }
+
       try {
         const res = await fetch("/api/reset", { method: "POST" });
         const data = await res.json();
-        if (data.ok) { alert("Assignments reset!"); location.reload(); }
-        else { alert("Reset failed"); }
-      } catch(err){ alert("Error resetting assignments"); console.error(err);}
+        if (data.ok) { alert("Assignments have been reset!"); location.reload(); }
+        else { alert("Reset failed."); }
+      } catch (err) {
+        alert("Error resetting assignments.");
+        console.error(err);
+      }
     }
   });
 });
