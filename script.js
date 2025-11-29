@@ -3,48 +3,74 @@ const resultDiv = document.getElementById('result');
 const presentImg = document.getElementById('present');
 const lid = document.querySelector('.lid');
 
-let peopleData = [];
+// Names and exclusions
+const people = ["SAUL","JONAH","AARON","GABI","HELEN","JOHN","RACHEL","KATE","JIM"];
+const exclusions = {
+  "SAUL": [],
+  "JONAH": [],
+  "AARON": ["GABI"],
+  "GABI": ["AARON"],
+  "HELEN": ["JOHN"],
+  "JOHN": ["HELEN"],
+  "RACHEL": [],
+  "KATE": ["JIM"],
+  "JIM": ["KATE"]
+};
 
-async function loadNames() {
-  const res = await fetch('/api/draw');
-  const data = await res.json();
-  peopleData = data.people;
+// Track who’s already assigned in this session
+let assignments = {};
 
-  peopleData.forEach(person => {
-    const option = document.createElement('option');
-    option.value = person;
-    option.textContent = person;
-    nameSelect.appendChild(option);
-  });
-}
+// Populate dropdown
+people.forEach(person => {
+  const option = document.createElement('option');
+  option.value = person;
+  option.textContent = person;
+  nameSelect.appendChild(option);
+});
 
-loadNames();
-
-presentImg.addEventListener('click', async () => {
+// Handle present click
+presentImg.addEventListener('click', () => {
   const selectedName = nameSelect.value;
   if (!selectedName) {
     alert('Please select your name first.');
     return;
   }
 
-  // call API to get your assigned person
-  const res = await fetch(`/api/draw?name=${encodeURIComponent(selectedName)}`);
-  const data = await res.json();
-
-  if (data.error) {
-    resultDiv.textContent = data.error;
-  } else {
-    // animate lid
-    lid.classList.add('open-lid');
-
-    // wait for lid animation then show result + confetti
-    setTimeout(() => {
-      resultDiv.textContent = `You got: ${data.assignment}`;
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    }, 600);
+  // Check if already assigned
+  if (assignments[selectedName]) {
+    showResult(assignments[selectedName]);
+    return;
   }
+
+  // Create pool: exclude self, exclusions, and already assigned
+  const assignedValues = Object.values(assignments);
+  const pool = people.filter(p => 
+    p !== selectedName &&
+    !exclusions[selectedName].includes(p) &&
+    !assignedValues.includes(p)
+  );
+
+  if (pool.length === 0) {
+    alert('No valid people left to assign!');
+    return;
+  }
+
+  // Pick random person
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  assignments[selectedName] = picked;
+  showResult(picked);
 });
+
+// Show the result with lid animation + confetti
+function showResult(name) {
+  lid.classList.add('open-lid');
+
+  setTimeout(() => {
+    resultDiv.textContent = `You got: ${name}`;
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }, 600);
+}
