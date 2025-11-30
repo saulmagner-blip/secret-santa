@@ -18,8 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultText = document.getElementById('result-text');
 
   let selectedName = null;
+  const vibrate = () => { if(navigator.vibrate) navigator.vibrate(50); };
 
-  function vibrate() { if(navigator.vibrate) navigator.vibrate(50); }
+  // LocalStorage lock
+  const lockedNames = JSON.parse(localStorage.getItem("lockedNames") || "[]");
+  nameButtons.forEach(btn => {
+    if (lockedNames.includes(btn.dataset.name)) {
+      btn.style.opacity = 0.5;
+      btn.style.pointerEvents = "none";
+    }
+  });
 
   elf.addEventListener('click', () => {
     vibrate();
@@ -33,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       vibrate();
       selectedName = btn.dataset.name;
+      if (lockedNames.includes(selectedName)) return;
+
       selectedNameDisplay.src = `button_${selectedName.toLowerCase()}.png`;
       selectedNameDisplay.classList.remove('hidden');
       speech.src = 'speech_confirm.png';
@@ -53,6 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if(data.error){ alert(data.error); return; }
       const picked = data.assignment;
 
+      // Lock this name
+      lockedNames.push(selectedName);
+      localStorage.setItem("lockedNames", JSON.stringify(lockedNames));
+
       elf.style.display='none';
       elfHappy.classList.remove('hidden');
       resultText.src = `result_${picked.toLowerCase()}.png`;
@@ -62,9 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       speech.classList.add('hidden');
       yesNo.classList.add('hidden');
       nameButtonsContainer.classList.add('hidden');
-    } catch(err){
-      alert("Error fetching assignment"); console.error(err);
-    }
+    } catch(err){ alert("Error fetching assignment"); console.error(err); }
   });
 
   noBtn.addEventListener('click', () => {
@@ -88,8 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
       try{
         const res = await fetch("/api/reset", { method: "POST" });
         const data = await res.json();
-        if(data.ok){ alert("Assignments reset!"); location.reload(); }
-        else alert("Reset failed.");
+        if(data.ok){
+          alert("Assignments reset!");
+          localStorage.removeItem("lockedNames");
+          location.reload();
+        } else alert("Reset failed.");
       } catch(err){ alert("Error resetting."); console.error(err); }
     }
   });
