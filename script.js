@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultText = document.getElementById('result-text');
 
   let selectedName = null;
-  function vibrate(){ if(navigator.vibrate) navigator.vibrate(50); }
+
+  function vibrate() { if(navigator.vibrate) navigator.vibrate(50); }
 
   elf.addEventListener('click', () => {
     vibrate();
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectedName=null;
   });
 
+  // Shift+R reset
   document.addEventListener("keydown", async e => {
     if(e.shiftKey && e.key.toLowerCase()==="r"){
       const pw = prompt("Enter admin password to reset assignments:");

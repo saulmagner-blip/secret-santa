@@ -3,31 +3,27 @@ body, html { width: 100%; height: 100%; font-family: sans-serif; cursor: url('cu
 .clickable:hover { cursor: url('cursor_hover.png') 45 10, pointer; }
 
 .game-container { position: relative; width: 100%; height: 100vh; overflow: hidden; }
-
-.background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+.background { position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1; }
 
 .elf-area { position: relative; margin: 0 auto; top: 10%; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 350px; }
-
 .elf, #selected-name, #speech, #result-text {
-  width: auto; max-width: 100%; height: auto; display: block; transform: none !important; transition: none !important; image-rendering: auto;
-  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+  width: auto; max-width: 100%; height: auto; display: block;
+  -webkit-user-select:none; user-select:none;
 }
+.yes-no { display:flex; justify-content:center; gap:10px; }
+.yes-no img { max-width:120px; height:auto; }
+.result { margin-top:10px; text-align:center; }
 
-.yes-no { display: flex; justify-content: center; gap: 10px; }
-.yes-no img { width: auto; max-width: 120px; height: auto; }
+.name-buttons { position:absolute; bottom:5%; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:10px; }
+.button-row { display:flex; justify-content:center; gap:10px; }
+.name-button { width:auto; max-width:none; height:auto; }
 
-.result { margin-top: 10px; text-align: center; }
+.hidden { display:none !important; visibility:hidden !important; }
 
-.name-buttons { position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; gap: 10px; }
-.button-row { display: flex; justify-content: center; gap: 10px; }
-.name-button { width: auto; max-width: none; height: auto; }
-
-.hidden { display: none !important; visibility: hidden !important; }
-
-@media (max-width: 768px) {
-  .elf { width: auto; max-width: 40vw; }
-  #selected-name, #speech, #result-text { width: auto; max-width: 60vw; }
-  .yes-no img { width: auto; max-width: 30vw; }
-  .name-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 90%; max-width: 400px; bottom: 5%; left: 50%; transform: translateX(-50%); }
-  .button-row { display: contents; }
+@media(max-width:768px){
+  .elf { max-width:40vw; }
+  #selected-name, #speech, #result-text { max-width:60vw; }
+  .yes-no img { max-width:30vw; }
+  .name-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:90%; max-width:400px; bottom:5%; left:50%; transform:translateX(-50%); }
+  .button-row { display:contents; }
 }
